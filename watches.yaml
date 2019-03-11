@@ -1,0 +1,5 @@
+---
+- version: v1alpha1
+  group: loadtest.jmeter.com
+  kind: Jmeter
+  role: /opt/ansible/roles/jmeter

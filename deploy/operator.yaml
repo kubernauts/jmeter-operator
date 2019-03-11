@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jmeter-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: jmeter-operator
+  template:
+    metadata:
+      labels:
+        name: jmeter-operator
+    spec:
+      serviceAccountName: jmeter-operator
+      containers:
+        - name: jmeter-operator
+          # Replace this with the built image name
+          image: "{{ REPLACE_IMAGE }}"
+          imagePullPolicy: "{{ pull_policy|default('Always') }}"
+          env:
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "jmeter-operator"

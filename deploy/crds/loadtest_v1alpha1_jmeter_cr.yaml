@@ -1,0 +1,7 @@
+apiVersion: loadtest.jmeter.com/v1alpha1
+kind: Jmeter
+metadata:
+  name: example-jmeter
+spec:
+  # Add fields here
+  size: 3
