@@ -1,2 +1,311 @@
 ---
 # tasks file for jmeter
+- name: Create Jmeter Master Configmap   
+  k8s:
+    state: present
+    definition:
+      kind: ConfigMap
+      metadata:
+        name: '{{ meta.name }}-jmeter-master-config'
+        namespace: '{{ meta.namespace }}'
+        labels:
+          jmeter_mode: '{{ meta.name }}-jmeter-master'
+      data:
+        load_test: |
+          #!/bin/bash
+          #Script created to invoke jmeter test script with the slave POD IP addresses
+          #Script should be run like: ./load_test "path to the test script in jmx format"
+          /jmeter/apache-jmeter-*/bin/jmeter -n -t $1 -Dserver.rmi.ssl.disable=true -R `getent ahostsv4 '{{ meta.name }}-jmeter-slaves-svc' | cut -d' ' -f1 | sort -u | awk -v ORS=, '{print $1}' | sed 's/,$//'`
+
+- name: Start Jmeter Master
+  k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1    
+      kind: Deployment
+      metadata:
+        name: '{{ meta.name }}-jmeter-master'
+        namespace: '{{ meta.namespace }}'        
+        labels:
+          jmeter_mode: '{{ meta.name }}-jmeter-master'
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            jmeter_mode: '{{ meta.name }}-jmeter-master'
+        template:
+          metadata:
+            labels:
+              jmeter_mode: '{{ meta.name }}-jmeter-master'
+          spec:
+            containers:
+            - name: jmetermaster
+              image: "{{jmeter_master_image}}"
+              imagePullPolicy: IfNotPresent
+              command: [ "/bin/bash", "-c", "--" ]
+              args: [ "while true; do sleep 30; done;" ]
+              volumeMounts:
+                - name: loadtest
+                  mountPath: /load_test
+                  subPath: "load_test"
+              ports:
+              - containerPort: 60000
+            volumes:
+            - name: loadtest 
+              configMap:
+               name: '{{ meta.name }}-jmeter-master-config'
+
+- name: Start Jmeter Slaves        
+  k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1 
+      kind: Deployment
+      metadata:
+        name: '{{ meta.name }}-jmeter-slaves'
+        namespace: '{{ meta.namespace }}'        
+        labels:
+          jmeter_mode: '{{ meta.name }}-slave'
+      spec:
+        replicas: "{{slave_size}}"
+        selector:
+          matchLabels:
+            jmeter_mode: '{{ meta.name }}-slave'
+        template:
+          metadata:
+            labels:
+              jmeter_mode: '{{ meta.name }}-slave'
+          spec:
+            containers:
+            - name: jmslave
+              image: "{{jmeter_slave_image}}"
+              imagePullPolicy: IfNotPresent
+              ports:
+              - containerPort: 1099
+              - containerPort: 50000          
+
+- name: Create Jmeter Slave Service    
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: '{{ meta.name }}-jmeter-slaves-svc'
+        namespace: '{{ meta.namespace }}'        
+        labels:
+          jmeter_mode: '{{ meta.name }}-slave'
+      spec:
+        clusterIP: None
+        ports:
+          - port: 1099
+            name: first
+            targetPort: 1099
+          - port: 50000
+            name: second
+            targetPort: 50000
+        selector:
+          jmeter_mode: '{{ meta.name }}-slave'
+
+- name: Create InfluxDB Configmap   
+  when: influxdb_install
+  k8s:
+    state: present
+    definition:
+      kind: ConfigMap
+      metadata:
+        name: '{{ meta.name }}-influxdb-config'
+        namespace: '{{ meta.namespace }}'        
+        labels:
+          jmeter_mode: '{{ meta.name }}-influxdb'
+      data:
+       influxdb.conf: |
+         [meta]
+           dir = "/var/lib/influxdb/meta"
+         [data]
+           dir = "/var/lib/influxdb/data"
+           engine = "tsm1"
+           wal-dir = "/var/lib/influxdb/wal"
+         # Configure the graphite api
+         [[graphite]]
+         enabled = true
+         bind-address = ":2003" # If not set, is actually set to bind-address.
+         database = "jmeter"  # store graphite data in this database
+     
+- name: InfluxDB Deployment  
+  when: influxdb_install
+  k8s:
+    state: present
+    definition:       
+      apiVersion: apps/v1 
+      kind: Deployment
+      metadata:
+        name: '{{ meta.name }}-influxdb'
+        namespace: '{{ meta.namespace }}'        
+        labels:
+          app: '{{ meta.name }}-influxdb'
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: '{{ meta.name }}-influxdb'
+        template:
+          metadata:
+            labels:
+              app: '{{ meta.name }}-influxdb'
+          spec:
+            containers:
+              - image: "{{influxdb_image}}"
+                imagePullPolicy: IfNotPresent
+                name: influxdb
+                volumeMounts:
+                - name: config-volume
+                  mountPath: /etc/influxdb
+                ports:
+                  - containerPort: 8083
+                    name: influx
+                  - containerPort: 8086
+                    name: api
+                  - containerPort: 2003
+                    name: graphite
+            volumes:
+            - name: config-volume
+              configMap:
+               name: '{{ meta.name }}-influxdb-config'
+
+- name: InfluxDB Service
+  when: influxdb_install
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: '{{ meta.name }}-influxdb'
+        namespace: '{{ meta.namespace }}'        
+        labels:
+          app: '{{ meta.name }}-influxdb'
+      spec:
+        ports:
+          - port: 8083
+            name: http
+            targetPort: 8083
+          - port: 8086
+            name: api
+            targetPort: 8086
+          - port: 2003
+            name: graphite
+            targetPort: 2003
+        selector:
+          app: '{{ meta.name }}-influxdb'    
+- name: Grafana Deployment
+  when: grafana_install
+  k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1 
+      kind: Deployment
+      metadata:
+        name: '{{ meta.name }}-grafana'
+        namespace: '{{ meta.namespace }}'        
+        labels:
+          app: '{{ meta.name }}-grafana'
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: '{{ meta.name }}-grafana'
+        template:
+          metadata:
+            labels:
+              app: '{{ meta.name }}-grafana'
+          spec:
+            containers:
+            - name: grafana
+              image: "{{grafana_image}}"
+              imagePullPolicy: IfNotPresent
+              ports:
+              - containerPort: 3000
+                protocol: TCP
+              env:
+              - name: GF_AUTH_BASIC_ENABLED
+                value: "true"
+              - name: GF_USERS_ALLOW_ORG_CREATE
+                value: "true"
+              - name: GF_AUTH_ANONYMOUS_ENABLED
+                value: "true"
+              - name: GF_AUTH_ANONYMOUS_ORG_ROLE
+                value: Admin
+              - name: GF_SERVER_ROOT_URL
+                # If you're only using the API Server proxy, set this value instead:
+                # value: /api/v1/namespaces/kube-system/services/monitoring-grafana/proxy
+                value: "{{grafana_server_root}}"
+    
+- name: Grafana Service
+  when: grafana_install  
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: '{{ meta.name }}-grafana'
+        namespace: '{{ meta.namespace }}'        
+        labels:
+          app: '{{ meta.name }}-grafana'
+      spec:
+        ports:
+          - port: 3000
+            targetPort: 3000
+        selector:
+          app: '{{ meta.name }}-grafana'
+        type: "{{grafana_service_type}}"
+    
+- name: Grafana-Reporter Deployment
+  when: grafana_reporter_install
+  k8s:
+    state: present
+    definition:       
+      apiVersion: apps/v1 
+      kind: Deployment
+      metadata:
+        name: '{{ meta.name }}-jmeter-reporter'
+        namespace: '{{ meta.namespace }}'        
+        labels:
+          jmeter_mode: '{{ meta.name }}-jmeter-reporter'
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            jmeter_mode: '{{ meta.name }}-jmeter-reporter'
+        template:
+          metadata:
+            labels:
+              jmeter_mode: '{{ meta.name }}-jmeter-reporter'
+          spec:
+            containers:
+            - name: jmreporter
+              image: "{{grafana_reporter_image}}"
+              imagePullPolicy: IfNotPresent
+              ports:
+              - containerPort: 8686         
+
+- name: Grafana-Reporter Service
+  when: grafana_reporter_install
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: '{{ meta.name }}-jmeter-reporter'
+        namespace: '{{ meta.namespace }}'        
+        labels:
+          jmeter_mode: '{{ meta.name }}-jmeter-reporter'
+      spec:
+        ports:
+          - port: 8686
+            targetPort: 8686
+        selector:
+          jmeter_mode: '{{ meta.name }}-jmeter-reporter'
+        type: "{{grafana_service_type}}"    

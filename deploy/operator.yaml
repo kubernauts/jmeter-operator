@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: jmeter-operator
+  namespace: jmeter-loadtest
 spec:
   replicas: 1
   selector:
@@ -16,8 +17,8 @@ spec:
       containers:
         - name: jmeter-operator
           # Replace this with the built image name
-          image: "{{ REPLACE_IMAGE }}"
-          imagePullPolicy: "{{ pull_policy|default('Always') }}"
+          image: kubernautslabs/jmeter-operator:v0.0.1
+          imagePullPolicy: Always
           env:
             - name: WATCH_NAMESPACE
               valueFrom:
