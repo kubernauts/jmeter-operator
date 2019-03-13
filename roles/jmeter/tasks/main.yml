@@ -108,7 +108,7 @@
           jmeter_mode: '{{ meta.name }}-slave'
 
 - name: Create InfluxDB Configmap   
-  when: influxdb_install
+  when: influxdb_install == "true"
   k8s:
     state: present
     definition:
@@ -133,7 +133,7 @@
          database = "jmeter"  # store graphite data in this database
      
 - name: InfluxDB Deployment  
-  when: influxdb_install
+  when: influxdb_install == "true"
   k8s:
     state: present
     definition:       
@@ -174,7 +174,7 @@
                name: '{{ meta.name }}-influxdb-config'
 
 - name: InfluxDB Service
-  when: influxdb_install
+  when: influxdb_install == "true"
   k8s:
     state: present
     definition:
@@ -199,7 +199,7 @@
         selector:
           app: '{{ meta.name }}-influxdb'    
 - name: Grafana Deployment
-  when: grafana_install
+  when: grafana_install == "true"
   k8s:
     state: present
     definition:
@@ -242,7 +242,7 @@
                 value: "{{grafana_server_root}}"
     
 - name: Grafana Service
-  when: grafana_install  
+  when: grafana_install == "true"
   k8s:
     state: present
     definition:
@@ -262,7 +262,7 @@
         type: "{{grafana_service_type}}"
     
 - name: Grafana-Reporter Deployment
-  when: grafana_reporter_install
+  when: grafana_reporter_install == "true"
   k8s:
     state: present
     definition:       
@@ -291,7 +291,7 @@
               - containerPort: 8686         
 
 - name: Grafana-Reporter Service
-  when: grafana_reporter_install
+  when: grafana_reporter_install == "true"
   k8s:
     state: present
     definition:
@@ -309,3 +309,66 @@
         selector:
           jmeter_mode: '{{ meta.name }}-jmeter-reporter'
         type: "{{grafana_service_type}}"    
+
+- name: Delete InfluxDB Configmap if set to false
+  when: influxdb_install == "false"
+  k8s:
+    state: absent
+    api_version: v1
+    kind: ConfigMap
+    namespace: '{{ meta.namespace }}'
+    name: '{{ meta.name }}-influxdb-config'
+
+- name: Delete InfluxDB Deployment if set to false
+  when: influxdb_install == "false"
+  k8s:
+    state: absent
+    api_version: apps/v1 
+    kind: Deployment
+    namespace: '{{ meta.namespace }}'
+    name: '{{ meta.name }}-influxdb'
+
+- name: Delete InfluxDB Service if set to false
+  when: influxdb_install == "false"
+  k8s:
+    state: absent
+    api_version: v1
+    kind: Service
+    namespace: '{{ meta.namespace }}'
+    name: '{{ meta.name }}-influxdb'
+
+- name: Delete Grafana Deployment if set to false
+  when: grafana_install == "false"
+  k8s:
+    state: absent
+    api_version: apps/v1 
+    kind: Deployment
+    namespace: '{{ meta.namespace }}'
+    name: '{{ meta.name }}-grafana'
+
+- name: Delete Grafana Service if set to false
+  when: grafana_install == "false"
+  k8s:
+    state: absent
+    api_version: v1
+    kind: Service
+    namespace: '{{ meta.namespace }}'
+    name: '{{ meta.name }}-grafana'
+
+- name: Delete Grafana Reporter Deployment if set to false
+  when: grafana_reporter_install == "false"
+  k8s:
+    state: absent
+    api_version: apps/v1 
+    kind: Deployment
+    namespace: '{{ meta.namespace }}'
+    name: '{{ meta.name }}-jmeter-reporter'
+
+- name: Delete Grafana Reporter Service if set to false
+  when: grafana_reporter_install == "false"
+  k8s:
+    state: absent
+    api_version: v1
+    kind: Service
+    namespace: '{{ meta.namespace }}'
+    name: '{{ meta.name }}-jmeter-reporter'   

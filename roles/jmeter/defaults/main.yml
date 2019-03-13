@@ -6,7 +6,7 @@ jmeter_slave_image: kubernautslabs/jmeter_slave:latest
 grafana_server_root: /
 grafana_service_type: NodePort
 grafana_image: grafana/grafana:5.2.0
-grafana_install: true
-grafana_reporter_install: false
+grafana_install: "true"
+grafana_reporter_install: "false"
 grafana_reporter_image: kubernautslabs/jmeter-reporter:latest
-influxdb_install: true
+influxdb_install: "true"
