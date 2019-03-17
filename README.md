@@ -142,7 +142,7 @@ Creating the Influxdb data source
 
 (8.) You can access your Grafana now and confirm whether the datasource was created.
 
-![grafana_datasource](/grafana_datasource.png)
+![](img/grafana_datasource.png)
 
 (9.) Run a sample jmeter test script (there is a sample test script cloudssky.jmx in this repo). This can be initiated by running "**./start_test.sh**".
 
@@ -174,7 +174,7 @@ Otherwise the graphs on Grafana may not show anything!
 
 (10.) Import the sample jmeter Grafana dashboard (GrafanaJMeterTemplate.json) and select the InfluxDB datasource that was created. Check the progress of the test:
 
-![test_progress](/test_progress.png)
+![](img/test_progress.png)
 
 To learn more about the Grafana reporter module and how to make use of ti, you can check the following blog post:
 
