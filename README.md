@@ -52,7 +52,6 @@ Check the status fo the operator deployment (this is deployed in kube-system nam
 kubectl -n kube-system get pods | grep jmeter
 
 ​```jmeter-operator-6f54d969c7-w4h4l                                         1/1     Running     0          2m```
-````
 
 (5.) Create a namespace for the jmeter deployment: "**kubectl create namespace tqa**"
 
@@ -175,3 +174,4 @@ Otherwise the graphs on Grafana may not show anything!
 To learn more about the Grafana reporter module and how to make use of ti, you can check the following blog post:
 
 <https://goo.gl/mkoX9E>
+````
