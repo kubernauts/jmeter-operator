@@ -6,8 +6,8 @@ metadata:
 spec:
   # Add fields here
   slave_size: 2
-  jmeter_master_image: kubernautslabs/jmeter_master:latest
-  jmeter_slave_image: kubernautslabs/jmeter_slave:latest
+  jmeter_master_image: kubernautslabs/jmeter_master:5.0
+  jmeter_slave_image: kubernautslabs/jmeter_slave:5.0
   grafana_server_root: /
   grafana_service_type: LoadBalancer
   grafana_image: grafana/grafana:5.2.0
