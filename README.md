@@ -1,7 +1,3 @@
----
-typora-root-url: img
----
-
 # Jmeter-operator
 
 This operator was created to simplify the process of deploying a Jmeter cluster on kubernetes.
