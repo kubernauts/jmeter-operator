@@ -1,0 +1,18 @@
+apiVersion: loadtest.jmeter.com/v1alpha1
+kind: Jmeter
+metadata:
+  name: tqa-loadtest
+  namespace: tqa
+spec:
+  # Add fields here
+  slave_size: 2
+  jmeter_master_image: kubernautslabs/jmeter_master:latest
+  jmeter_slave_image: kubernautslabs/jmeter_slave:latest
+  grafana_server_root: /
+  grafana_service_type: LoadBalancer
+  grafana_image: grafana/grafana:5.2.0
+  influxdb_image: influxdb
+  grafana_install: "true"
+  grafana_reporter_install: "false"
+  grafana_reporter_image: kubernautslabs/jmeter-reporter:latest
+  influxdb_install: "true"
