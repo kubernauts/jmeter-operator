@@ -17,7 +17,9 @@ The steps to use this operator is as follows:
 (1.) Clone this repo "**git clone https://github.com/kubernauts/jmeter-operator.git**"
 
 (2.) Install the Jmeter CRD (custom resource definition):
+
 "**kubectl apply -f deploy/crds/loadtest_v1alpha1_jmeter_crd.yaml**".
+
 This is a cluster-wide scope operator, the reason for this is that multiple Jmeter clusters may be needed within an organization but there is nothing stopping you from using just one Jmeter deployment but it is strongly advised that you run it in a dedicated namespace which will we will as we proceed
 
 (3.) Confirm that the CRD has been installed "**kubectl get crd | grep jmeter" or "kubectl describe crd jmeters.loadtest.jmeter.com**"
