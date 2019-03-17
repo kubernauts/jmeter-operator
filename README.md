@@ -138,7 +138,7 @@ Creating the Influxdb data source
 
 
 
-![1552818855716](/home/chris/.config/Typora/typora-user-images/1552818855716.png)
+![](img/grafana_datasource.png)
 
 (9.) Run a sample jmeter test script (there is a sample test script cloudssky.jmx). This can be initiated by running "**./start_test.sh**".
 
@@ -170,7 +170,7 @@ Otherwise the graphs on Grafana may not show anything!
 
 (10.) Import the sample jmeter Grafana dashboard (GrafanaJMeterTemplate.json) and select the InfluxDB datasource that was created. Check the progress of the test:
 
-![1552820250331](/home/chris/.config/Typora/typora-user-images/1552820250331.png)
+![](img/test_progress.png)
 
 
 
