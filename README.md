@@ -1,3 +1,7 @@
+---
+typora-root-url: img
+---
+
 # Jmeter-operator
 
 This operator was created to simplify the process of deploying a Jmeter cluster on kubernetes.
@@ -20,7 +24,7 @@ The steps to use this operator is as follows:
 
 (3.) Confirm that the CRD has been installed "**kubectl get crd | grep jmeter" or "kubectl describe crd jmeters.loadtest.jmeter.com**"
 
-From "***kubectl describe crd jmeters.loadtest.jmeter.com***", you should below as part of the output:
+From "**_kubectl describe crd jmeters.loadtest.jmeter.com_**", you should below as part of the output:
 
 ````Group:   loadtest.jmeter.com
   Names:
@@ -121,13 +125,15 @@ replicaset.apps/tqa-loadtest-jmeter-slaves-c4787d59    2         2         2    
 
 ```
 
-(7.) The next step is entirely optional, they are just to make creating a Jmeter load test easier, the scripts can be modified to suit your needs as you desire.
+(7.) The next step is entirely optional, they are just to make creating a Jmeter load test easier, the scripts (**initialize_cluster.sh and start_test.sh**) can be modified to suit your needs as you desire.
 
-Initialize the database name in InfluxDB (default name is 'jmeter') and also create the InfluxDB datasource in Grafana.
+The initialize_cluster.sh script will create the database name in InfluxDB (default name is 'jmeter') and also create the InfluxDB datasource in Grafana.
 
 The script will ask you about the namespace where the jmeter cluster was created (tqa) and then proceed to create the needed resources in InfluxDB and Grafana.
 
 ```./initialize_cluster.sh
+./initialize_cluster.sh
+
 Enter the Jmeter Namespace: tqa
 Creating Influxdb jmeter Database
 Creating the Influxdb data source
@@ -136,14 +142,12 @@ Creating the Influxdb data source
 
 (8.) You can access your Grafana now and confirm whether the datasource was created.
 
+![grafana_datasource](/grafana_datasource.png)
 
-
-![](img/grafana_datasource.png)
-
-(9.) Run a sample jmeter test script (there is a sample test script cloudssky.jmx). This can be initiated by running "**./start_test.sh**".
+(9.) Run a sample jmeter test script (there is a sample test script cloudssky.jmx in this repo). This can be initiated by running "**./start_test.sh**".
 
 ```
-./start_test.sh 
+./start_test.sh
 Enter the Jmeter Namespace: tqa
 Enter path to the jmx file cloudssky.jmx
 Mar 17, 2019 10:37:19 AM java.util.prefs.FileSystemPreferences$1 run
@@ -170,9 +174,7 @@ Otherwise the graphs on Grafana may not show anything!
 
 (10.) Import the sample jmeter Grafana dashboard (GrafanaJMeterTemplate.json) and select the InfluxDB datasource that was created. Check the progress of the test:
 
-![](img/test_progress.png)
-
-
+![test_progress](/test_progress.png)
 
 To learn more about the Grafana reporter module and how to make use of ti, you can check the following blog post:
 
