@@ -52,7 +52,7 @@ Status:
 
 (4.) Deploy the Jmeter operator deployment "kubectl apply -f deploy/" , this is what will watch the API for any jmeter CRD objects, once it detects the jmeter CRD, it will proceed to process that request and create the necessary kubernetes objects
 
-Check the status fo the operator deployment (this is deployed in kube-system namespace by default)
+Check the status for the operator deployment (this is deployed in kube-system namespace by default)
 
 kubectl -n kube-system get pods | grep jmeter
 
