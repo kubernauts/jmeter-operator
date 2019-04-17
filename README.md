@@ -179,7 +179,7 @@ Otherwise the graphs on Grafana may not show anything!
 
 ![](img/test_progress.png)
 
-To learn more about the Grafana reporter module and how to make use of ti, you can check the following blog post:
+To learn more about the Grafana reporter module and how to make use of it, you can check the following blog post:
 
 <https://goo.gl/mkoX9E>
 
