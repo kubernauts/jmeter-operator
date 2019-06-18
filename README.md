@@ -128,7 +128,7 @@ replicaset.apps/tqa-loadtest-jmeter-slaves-c4787d59    2         2         2    
 
 ```
 
-(7.) The next step is entirely optional, they are just to make creating a Jmeter load test easier, the scripts (**initialize_cluster.sh and start_test.sh**) can be modified to suit your needs as you desire.
+(7.) The next step is entirely optional, they are just to make creating a Jmeter load test easier, the scripts (**[initialize_cluster.sh](./initialize_cluster.sh) and [start_test.sh](./start_test.sh)**) can be modified to suit your needs as you desire.
 
 The initialize_cluster.sh script will create the database name in InfluxDB (default name is 'jmeter') and also create the InfluxDB datasource in Grafana.
 
