@@ -1,0 +1,7 @@
+FROM gcr.io/wp-engine-development/jmeter-base:latest
+
+COPY jmeter-slave-entrypoint.sh /
+		
+EXPOSE 1099 50000
+
+ENTRYPOINT ["/jmeter-slave-entrypoint.sh"]

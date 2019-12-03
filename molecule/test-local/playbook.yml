@@ -7,7 +7,7 @@
   tasks:
   # using command so we don't need to install any dependencies
   - name: Get existing image hash
-    command: docker images -q {{image_name}}
+    command: docker images -q {{ image_name }}
     register: prev_hash
     changed_when: false
 

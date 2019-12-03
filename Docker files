@@ -1,0 +1,77 @@
+Docker images for the master and slaves nodes can be built using the following procedure.
+
+First of all the jmeter base image needs to be created from the opend-jdk image, this will be used as reference while building the master and slaves images:
+
+============JMETER BASE DOCKER FILE============
+
+	#based on https://github.com/justb4/docker-jmeter/
+	FROM alpine:3.10
+
+	ARG JMETER_VERSION="5.2.1"
+	ENV JMETER_HOME /opt/apache-jmeter-${JMETER_VERSION}
+	ENV	JMETER_BIN	${JMETER_HOME}/bin
+	ENV	JMETER_DOWNLOAD_URL  https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-${JMETER_VERSION}.tgz
+
+	# Install extra packages
+	# See https://github.com/gliderlabs/docker-alpine/issues/136#issuecomment-272703023
+	# Change TimeZone TODO: TZ still is not set!
+	ARG TZ="America/Chicago"
+	RUN    apk update \
+		&& apk upgrade \
+		&& apk add ca-certificates \
+		&& update-ca-certificates \
+		&& apk add --update openjdk8-jre tzdata curl unzip bash \
+		&& apk add --no-cache nss \
+		&& rm -rf /var/cache/apk/* \
+		&& mkdir -p /tmp/dependencies  \
+		&& curl -L --silent ${JMETER_DOWNLOAD_URL} >  /tmp/dependencies/apache-jmeter-${JMETER_VERSION}.tgz  \
+		&& mkdir -p /opt  \
+		&& tar -xzf /tmp/dependencies/apache-jmeter-${JMETER_VERSION}.tgz -C /opt  \
+		&& rm -rf /tmp/dependencies
+
+	# TODO: plugins (later)
+	# && unzip -oq "/tmp/dependencies/JMeterPlugins-*.zip" -d $JMETER_HOME
+
+	# Set global PATH such that "jmeter" command is found
+	ENV PATH $PATH:$JMETER_BIN
+
+	WORKDIR	${JMETER_HOME}
+
+
+============Build, tag and push the base image============
+
+		docker build --tag="gcr.io/wp-engine-development/jmeter-base:latest" -f Dockerfile-base .
+		docker push gcr.io/wp-engine-development/jmeter-base:latest
+    
+
+============JMETER-MASTER DOCKER FILE============
+
+		FROM gcr.io/wp-engine-development/jmeter-base:latest
+
+
+		EXPOSE 60000
+
+============Build, tag and push the master image============
+
+		docker build --tag="gcr.io/wp-engine-development/jmeter-master:latest" -f Dockerfile-master .
+		docker push gcr.io/wp-engine-development/jmeter-master:latest
+
+================JMETER-SLAVES DOCKER FILE=====================
+		FROM gcr.io/wp-engine-development/jmeter-base:latest
+
+		COPY jmeter-slave-entrypoint.sh /
+				
+		EXPOSE 1099 50000
+
+		ENTRYPOINT ["/jmeter-slave-entrypoint.sh"]
+
+
+============Build, tag and push the slave image:================
+
+		docker build --tag="gcr.io/wp-engine-development/jmeter-slave:latest" -f Dockerfile-slave .
+		docker push gcr.io/wp-engine-development/jmeter-slave:latest
+
+================JMETER-REPORTER DOCKER FILE=====================
+
+		docker build --tag="gcr.io/wp-engine-development/jmeter-reporter:latest" -f Dockerfile-reporter .
+		docker push gcr.io/wp-engine-development/jmeter-reporter:latest

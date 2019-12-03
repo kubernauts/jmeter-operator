@@ -41,4 +41,4 @@ kubectl -n $namespace cp "$jmx" "$master_pod:/$test_name"
 
 ## Echo Starting Jmeter load test
 
-kubectl -n $namespace exec -ti $master_pod -- /bin/bash /load_test "$test_name"
+kubectl -n $namespace exec -ti $master_pod -- /bin/bash /load_test -n jmeter.csv -t "$test_name" -GBASE_URL=perftest4.wpengine.com -GBASE_PORT=80 -GBASE_PROTOCOL=http

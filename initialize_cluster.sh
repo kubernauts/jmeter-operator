@@ -41,7 +41,7 @@ grafana_pod=`kubectl -n $namespace get po | grep grafana | awk '{print $1}'`
 
 master_pod=`kubectl -n $namespace get po | grep master | awk '{print $1}'`
 
-# Workaround for the read only attribute of config map
+# # Workaround for the read only attribute of config map
 kubectl -n $namespace exec -ti $master_pod -- cp -rf /load_test /jmeter/load_test
 
 kubectl -n $namespace exec -ti $master_pod -- chmod 755 /jmeter/load_test

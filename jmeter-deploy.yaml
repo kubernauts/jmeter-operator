@@ -6,13 +6,13 @@ metadata:
 spec:
   # Add fields here
   slave_size: 2
-  jmeter_master_image: kubernautslabs/jmeter_master:5.0
-  jmeter_slave_image: kubernautslabs/jmeter_slave:5.0
+  jmeter_master_image: gcr.io/wp-engine-development/jmeter-master:latest
+  jmeter_slave_image: gcr.io/wp-engine-development/jmeter-slave:latest
   grafana_server_root: /
   grafana_service_type: LoadBalancer
   grafana_image: grafana/grafana:5.2.0
   influxdb_image: influxdb
   grafana_install: "true"
   grafana_reporter_install: "false"
-  grafana_reporter_image: kubernautslabs/jmeter-reporter:latest
+  grafana_reporter_image: gcr.io/wp-engine-development/jmeter-reporter:latest
   influxdb_install: "true"

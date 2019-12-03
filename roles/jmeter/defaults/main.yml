@@ -1,12 +1,12 @@
 ---
 # defaults file for jmeter
 slave_size: 2
-jmeter_master_image: kubernautslabs/jmeter_master:latest
-jmeter_slave_image: kubernautslabs/jmeter_slave:latest
+jmeter_master_image: gcr.io/wp-engine-development/jmeter-master:5.2.1
+jmeter_slave_image: gcr.io/wp-engine-development/jmeter-slave:5.2.1
 grafana_server_root: /
 grafana_service_type: NodePort
 grafana_image: grafana/grafana:5.2.0
 grafana_install: "true"
 grafana_reporter_install: "false"
-grafana_reporter_image: kubernautslabs/jmeter-reporter:latest
+grafana_reporter_image: gcr.io/wp-engine-development/jmeter-reporter:latest
 influxdb_install: "true"

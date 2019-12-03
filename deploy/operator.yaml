@@ -17,7 +17,7 @@ spec:
       containers:
         - name: jmeter-operator
           # Replace this with the built image name
-          image: kubernautslabs/jmeter-operator:v0.0.1
+          image: gcr.io/wp-engine-development/jmeter-operator:latest
           imagePullPolicy: Always
           env:
             - name: WATCH_NAMESPACE

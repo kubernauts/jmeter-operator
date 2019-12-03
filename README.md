@@ -50,7 +50,14 @@ Status:
   Conditions:
 ```
 
-(4.) Deploy the Jmeter operator deployment "kubectl apply -f deploy/" , this is what will watch the API for any jmeter CRD objects, once it detects the jmeter CRD, it will proceed to process that request and create the necessary kubernetes objects
+(4.) Deploy the Jmeter operator deployment, this is what will watch the API for any jmeter CRD objects, once it detects the jmeter CRD, it will proceed to process that request and create the necessary kubernetes objects
+
+$ kubectl create -f deploy/service_account.yaml
+# Setup RBAC
+$ kubectl create -f deploy/role.yaml
+$ kubectl create -f deploy/role_binding.yaml
+# Deploy the app-operator
+$ kubectl create -f deploy/operator.yaml
 
 Check the status for the operator deployment (this is deployed in kube-system namespace by default)
 
@@ -74,15 +81,15 @@ metadata:
 spec:
   # Add fields here
   slave_size: 2
-  jmeter_master_image: kubernautslabs/jmeter_master:latest
-  jmeter_slave_image: kubernautslabs/jmeter_slave:latest
+  jmeter_master_image: gcr.io/wp-engine-development/jmeter-master:latest
+  jmeter_slave_image: gcr.io/wp-engine-development/jmeter-slave:latest
   grafana_server_root: /
   grafana_service_type: LoadBalancer
   grafana_image: grafana/grafana:5.2.0
   influxdb_image: influxdb
   grafana_install: "true"
   grafana_reporter_install: "false"
-  grafana_reporter_image: kubernautslabs/jmeter-reporter:latest
+  grafana_reporter_image: gcr.io/wp-engine-development/jmeter-reporter:latest
   influxdb_install: "true"
 ```
 

@@ -1,5 +1,5 @@
 ---
-# tasks file for jmeter
+tasks file for jmeter
 - name: Create Jmeter Master Configmap   
   k8s:
     state: present
@@ -14,8 +14,18 @@
         load_test: |
           #!/bin/bash
           #Script created to invoke jmeter test script with the slave POD IP addresses
-          #Script should be run like: ./load_test "path to the test script in jmx format"
-          /jmeter/apache-jmeter-*/bin/jmeter -n -t $1 -Dserver.rmi.ssl.disable=true -R `getent ahostsv4 '{{ meta.name }}-jmeter-slaves-svc' | cut -d' ' -f1 | sort -u | awk -v ORS=, '{print $1}' | sed 's/,$//'`
+          set -e
+          freeMem=`awk '/MemFree/ { print int($2/1024) }' /proc/meminfo`
+          s=$(($freeMem/10*8))
+          x=$(($freeMem/10*8))
+          n=$(($freeMem/10*2))
+          export JVM_ARGS="-Xmn${n}m -Xms${s}m -Xmx${x}m"
+
+          echo "START Running Jmeter slave on `date`"
+          echo "JVM_ARGS=${JVM_ARGS}"
+          echo "jmeter args=$@"
+
+          jmeter -Dserver.rmi.ssl.disable=true -R `getent ahostsv4 '{{ meta.name }}-jmeter-slaves-svc' | cut -d' ' -f1 | sort -u | awk -v ORS=, '{print $1}' | sed 's/,$//'`  $@
 
 - name: Start Jmeter Master
   k8s:

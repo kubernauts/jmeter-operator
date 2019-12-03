@@ -1,0 +1,4 @@
+FROM gcr.io/wp-engine-development/jmeter-base:latest
+
+
+EXPOSE 60000
