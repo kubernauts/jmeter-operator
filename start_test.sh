@@ -21,8 +21,8 @@ then
     exit
 fi
 
-jmx="$1"
-[ -n "$jmx" ] || read -p 'Enter path to the jmx file ' jmx
+jmx="$2"
+[ -n "$jmx" ] || read -p 'Enter path to the jmx file:' jmx
 
 if [ ! -f "$jmx" ];
 then
@@ -32,6 +32,7 @@ then
 fi
 
 test_name="$(basename "$jmx")"
+
 
 #Get Master pod details
 
