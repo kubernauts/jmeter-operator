@@ -1468,7 +1468,7 @@
         "multi": true,
         "name": "app",
         "options": [],
-        "query": "SHOW TAG VALUES FROM \"process\" WITH KEY = \"application\"",
+        "query": "SHOW TAG VALUES FROM \"jmeter\" WITH KEY = \"application\"",
         "refresh": 2,
         "regex": "",
         "sort": 1,
