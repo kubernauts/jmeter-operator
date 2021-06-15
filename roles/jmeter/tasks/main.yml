@@ -83,6 +83,7 @@
               ports:
               - containerPort: 1099
               - containerPort: 50000          
+              - containerPort: 9270
 
 - name: Create Jmeter Slave Service    
   k8s:
