@@ -51,3 +51,7 @@ kubectl -n $namespace exec -ti $master_pod -- chmod 755 /jmeter/load_test
 influxdb_svc=`kubectl -n $namespace get svc | grep influxdb | awk '{print $1}'`
 
 kubectl -n $namespace exec -ti $grafana_pod -- curl 'http://admin:admin@127.0.0.1:3000/api/datasources' -X POST -H 'Content-Type: application/json;charset=UTF-8' --data-binary '{"name":"jmeterdb","type":"influxdb","url":"http://'$influxdb_svc':8086","access":"proxy","isDefault":true,"database":"jmeter","user":"admin","password":"admin"}'
+
+#Import dashboard to grafana
+kubectl -n $namespace cp GrafanaJMeterTemplate.json.json $grafana_pod:/tmp
+kubectl -n $namespace exec -ti $grafana_pod -- curl -X POST -H "Content-Type: application/json" -d @/tmp/GrafanaJMeterTemplate.json.json "http://admin:admin@localhost:3000/api/dashboards/db"
