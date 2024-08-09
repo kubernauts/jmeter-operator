@@ -1,7 +1,9 @@
 {
+  "dashboard": {
+    
   "__inputs": [
     {
-      "name": "DS_JMETERDB",
+      "name": "jmeter",
       "label": "jmeterdb",
       "description": "",
       "type": "datasource",
@@ -47,7 +49,7 @@
         "type": "dashboard"
       },
       {
-        "datasource": "${DS_JMETERDB}",
+        "datasource": "jmeterdb",
         "enable": true,
         "iconColor": "rgb(237, 18, 18)",
         "iconSize": 17,
@@ -103,7 +105,7 @@
         "rgba(237, 129, 40, 0.89)",
         "rgba(50, 172, 45, 0.97)"
       ],
-      "datasource": "${DS_JMETERDB}",
+      "datasource": "jmeterdb",
       "editable": true,
       "error": false,
       "format": "none",
@@ -222,7 +224,7 @@
         "rgba(237, 129, 40, 0.89)",
         "rgba(50, 172, 45, 0.97)"
       ],
-      "datasource": "${DS_JMETERDB}",
+      "datasource": "jmeterdb",
       "editable": true,
       "error": false,
       "format": "none",
@@ -348,7 +350,7 @@
         "rgba(237, 129, 40, 0.89)",
         "rgba(245, 54, 54, 0.9)"
       ],
-      "datasource": "${DS_JMETERDB}",
+      "datasource": "jmeterdb",
       "editable": true,
       "error": false,
       "format": "percentunit",
@@ -463,7 +465,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_JMETERDB}",
+      "datasource": "jmeterdb",
       "editable": true,
       "error": false,
       "fill": 1,
@@ -597,7 +599,7 @@
         "rgba(237, 129, 40, 0.89)",
         "rgba(50, 172, 45, 0.97)"
       ],
-      "datasource": "${DS_JMETERDB}",
+      "datasource": "jmeterdb",
       "editable": true,
       "error": false,
       "format": "none",
@@ -702,7 +704,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_JMETERDB}",
+      "datasource": "jmeterdb",
       "editable": true,
       "error": false,
       "fill": 1,
@@ -847,7 +849,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_JMETERDB}",
+      "datasource": "jmeterdb",
       "editable": true,
       "error": false,
       "fill": 1,
@@ -985,7 +987,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_JMETERDB}",
+      "datasource": "jmeterdb",
       "editable": true,
       "error": false,
       "fill": 1,
@@ -1137,7 +1139,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_JMETERDB}",
+      "datasource": "jmeterdb",
       "editable": true,
       "error": false,
       "fill": 1,
@@ -1287,7 +1289,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_JMETERDB}",
+      "datasource": "jmeterdb",
       "editable": true,
       "error": false,
       "fill": 1,
@@ -1461,7 +1463,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "${DS_JMETERDB}",
+        "datasource": "jmeterdb",
         "hide": 0,
         "includeAll": false,
         "label": null,
@@ -1534,7 +1536,7 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": "${DS_JMETERDB}",
+        "datasource": "jmeterdb",
         "hide": 0,
         "includeAll": false,
         "label": null,
@@ -1554,7 +1556,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "${DS_JMETERDB}",
+        "datasource": "jmeterdb",
         "hide": 0,
         "includeAll": true,
         "label": null,
@@ -1606,4 +1608,17 @@
   "title": "JMeter Metric Template",
   "uid": "ltaas",
   "version": 1
+
+  },
+  "overwrite": true,
+  "inputs": [
+      {
+        "name": "jmeterdb",
+        "label": "jmeterdb",
+        "description": "",
+        "type": "datasource",
+        "pluginId": "influxdb",
+        "pluginName": "InfluxDB"
+      }
+    ]
 }
