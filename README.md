@@ -175,9 +175,6 @@ Normally you will set this via the Jmeter desktop application to make this easie
 
 Otherwise the graphs on Grafana may not show anything!
 
-(10.) Import the sample jmeter Grafana dashboard (GrafanaJMeterTemplate.json) and select the InfluxDB datasource that was created. Check the progress of the test:
-
-![](img/test_progress.png)
 
 To learn more about the Grafana reporter module and how to make use of it, you can check the following blog post:
 
